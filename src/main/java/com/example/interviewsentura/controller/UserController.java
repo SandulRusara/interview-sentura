@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/user")
@@ -31,5 +33,11 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable String userId) {
         userService.deleteUser(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> listUsers(@RequestParam Map<String, String> queryParams) {
+        Map<String, Object> users = userService.listUsers(queryParams);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 }

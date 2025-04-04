@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Service
 public class UserService {
@@ -101,6 +102,30 @@ public class UserService {
             if (!response.isSuccessful()) {
                 throw new RuntimeException("Failed to delete user: " + response.message());
             }
+        } catch (IOException e) {
+            throw new RuntimeException("Error making HTTP request to Weavy API", e);
+        }
+    }
+
+    public Map<String, Object> listUsers(Map<String, String> queryParams) {
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(weavyApiUrl + "/api/users").newBuilder();
+        queryParams.forEach(urlBuilder::addQueryParameter);
+
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .get()
+                .addHeader("Authorization", "Bearer " + weavyApiToken)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful() && response.body() != null) {
+                String responseBody = response.body().string();
+                return objectMapper.readValue(responseBody, Map.class);
+            } else {
+                throw new RuntimeException("Failed to list users: " + response.message());
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error converting response to Map", e);
         } catch (IOException e) {
             throw new RuntimeException("Error making HTTP request to Weavy API", e);
         }
