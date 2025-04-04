@@ -130,4 +130,28 @@ public class UserService {
             throw new RuntimeException("Error making HTTP request to Weavy API", e);
         }
     }
+    public UserDTO getUser(String userId,Boolean trashed){
+        String endpoint = weavyApiUrl + "/api/users/" + userId;
+        if (trashed != null) {
+            endpoint += "?trashed=" + trashed;
+        }
+
+        Request request = new Request.Builder()
+                .url(endpoint)
+                .get()
+                .addHeader("Authorization", "Bearer " + weavyApiToken)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (response.isSuccessful() && response.body() != null) {
+                String responseBody = response.body().string();
+                return objectMapper.readValue(responseBody, UserDTO.class);
+            } else {
+                throw new RuntimeException("Failed to get user: " + response.message());
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error converting response to UserDTO", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Error making HTTP request to Weavy API", e);
+        }
 }

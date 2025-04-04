@@ -40,4 +40,11 @@ public class UserController {
         Map<String, Object> users = userService.listUsers(queryParams);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDTO> getUser(@PathVariable String userId,
+                                           @RequestParam(required = false) Boolean trashed) {
+        UserDTO user = userService.getUser(userId, trashed);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 }
