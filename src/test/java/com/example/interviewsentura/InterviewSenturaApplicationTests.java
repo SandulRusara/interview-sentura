@@ -1,0 +1,13 @@
+package com.example.interviewsentura;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class InterviewSenturaApplicationTests {
+
+    @Test
+    void contextLoads() {
+    }
+
+}
