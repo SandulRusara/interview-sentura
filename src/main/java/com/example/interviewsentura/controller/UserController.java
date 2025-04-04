@@ -6,10 +6,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -21,5 +18,12 @@ public class UserController {
     public ResponseEntity<UserDTO> saveUser(@Valid @RequestBody UserDTO userDTO){
         UserDTO savedUser = userService.saveUser(userDTO);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable String userId,
+                                              @Valid @RequestBody UserDTO userDTO) {
+        UserDTO updatedUser = userService.updateUser(userId, userDTO);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 }

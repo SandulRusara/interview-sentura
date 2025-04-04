@@ -60,4 +60,32 @@ public class UserService {
             throw new RuntimeException("Error making HTTP request to Weavy API", e);
         }
     }
+
+    public UserDTO updateUser(String userId,UserDTO userDTO){
+        String endpoint = weavyApiUrl + "/api/users/" + userId;
+
+        try {
+            String jsonBody = objectMapper.writeValueAsString(userDTO);
+            RequestBody body = RequestBody.create(jsonBody, MediaType.parse("application/json"));
+            Request request = new Request.Builder()
+                    .url(endpoint)
+                    .put(body)
+                    .addHeader("Authorization", "Bearer " + weavyApiToken)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+
+            try (Response response = client.newCall(request).execute()) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String responseBody = response.body().string();
+                    return objectMapper.readValue(responseBody, UserDTO.class);
+                } else {
+                    throw new RuntimeException("Failed to update user: " + response.message());
+                }
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error converting user to JSON", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Error making HTTP request to Weavy API", e);
+        }
+    }
 }
